@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description: "Simple wallet app",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: {
@@ -24,6 +26,7 @@ export default function RootLayout({
             <AppbarClient />
             {children}
           </div>
+          <Toaster richColors position="top-right" />
         </body>
       </Providers>
     </html>

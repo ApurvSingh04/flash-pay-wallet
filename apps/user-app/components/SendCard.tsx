@@ -6,6 +6,8 @@ import { TextInput } from "@repo/ui/textinput";
 import { useState } from "react";
 import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
 
+import { toast } from "sonner";
+
 export function SendCard() {
     const [number, setNumber] = useState("");
     const [amount, setAmount] = useState("");
@@ -27,8 +29,10 @@ export function SendCard() {
                             setLoading(true);
                             const res = await p2pTransfer(number, Number(amount) * 100);
                             setLoading(false);
-                            if (res?.message) {
-                                alert(res.message);
+                            if (res?.message === "Transfer successful") {
+                                toast.success(res.message);
+                            } else if (res?.message) {
+                                toast.error(res.message);
                             }
                         }}>{loading ? "Sending..." : "Send"}</Button>
                     </div>

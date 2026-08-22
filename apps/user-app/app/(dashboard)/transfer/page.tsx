@@ -7,9 +7,15 @@ import { authOptions } from "../../lib/auth";
 
 async function getBalance() {
     const session = await getServerSession(authOptions);
+    const userId = (session?.user as any)?.id;
+    
+    if (!userId) {
+        return { amount: 0, locked: 0 };
+    }
+
     const balance = await prisma.balance.findFirst({
         where: {
-            userId: Number(session?.user?.id)
+            userId: Number(userId)
         }
     });
     return {
@@ -20,9 +26,15 @@ async function getBalance() {
 
 async function getOnRampTransactions() {
     const session = await getServerSession(authOptions);
+    const userId = (session?.user as any)?.id;
+    
+    if (!userId) {
+        return [];
+    }
+
     const txns = await prisma.onRampTransaction.findMany({
         where: {
-            userId: Number(session?.user?.id)
+            userId: Number(userId)
         }
     });
     return txns.map(t => ({

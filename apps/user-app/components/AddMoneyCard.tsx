@@ -7,6 +7,8 @@ import { useState } from "react";
 import { TextInput } from "@repo/ui/textinput";
 import { createOnRampTransactions } from "../app/lib/actions/createOnRampTxn";
 
+import { toast } from "sonner";
+
 const SUPPORTED_BANKS = [{
     name: "HDFC Bank",
     redirectUrl: "https://netbanking.hdfcbank.com"
@@ -19,6 +21,8 @@ export const AddMoney = () => {
     const [redirectUrl, setRedirectUrl] = useState(SUPPORTED_BANKS[0]?.redirectUrl || "");    
     const [amount, setAmount] = useState(0);
     const [provider, setProvider] = useState(SUPPORTED_BANKS[0]?.name || ""); 
+    const [loading, setLoading] = useState(false);
+
     return <Card title="Add Money">
     <div className="w-full">
         <TextInput label={"Amount"} placeholder={"Amount"} onChange={(val) => {
@@ -36,10 +40,18 @@ export const AddMoney = () => {
         }))} />
         <div className="flex justify-center pt-4">
             <Button onClick={async() => {
-                await createOnRampTransactions(amount * 100, provider);
-                window.location.href = redirectUrl || "";
+                if (loading) return;
+                setLoading(true);
+                const res = await createOnRampTransactions(amount * 100, provider);
+                setLoading(false);
+                if (res.message === "On ramp transaction added") {
+                    toast.success("Transaction processing");
+                    window.location.href = redirectUrl || "";
+                } else {
+                    toast.error(res.message);
+                }
             }}>
-            Add Money
+            {loading ? "Processing..." : "Add Money"}
             </Button>
         </div>
     </div>
