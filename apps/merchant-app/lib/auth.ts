@@ -35,6 +35,17 @@ export const authOptions: AuthOptions = {
         });
 
         return true;
+      },
+      async session({ session, token }: any) {
+        if (session.user?.email) {
+            const merchant = await db.merchant.findUnique({
+                where: { email: session.user.email }
+            });
+            if (merchant) {
+                session.user.id = merchant.id.toString();
+            }
+        }
+        return session;
       }
     },
     secret: process.env.NEXTAUTH_SECRET || "secret"
