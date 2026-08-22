@@ -1,6 +1,12 @@
 import db from "@repo/db/client";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs";
+import { z } from "zod";
+
+const credentialsSchema = z.object({
+    phone: z.string().length(10, "Phone number must be exactly 10 digits").regex(/^\d+$/, "Phone number must contain only digits"),
+    password: z.string().min(6, "Password must be at least 6 characters long")
+});
 
 export const authOptions = {
     providers: [
@@ -12,16 +18,23 @@ export const authOptions = {
           },
           // TODO: User credentials type from next-aut
           async authorize(credentials: any) {
-            // Do zod validation, OTP validation here
-            const hashedPassword = await bcrypt.hash(credentials.password, 10);
+            const parsedCredentials = credentialsSchema.safeParse(credentials);
+            if (!parsedCredentials.success) {
+                console.error("Invalid credentials format", parsedCredentials.error.format());
+                return null;
+            }
+
+            const { phone, password } = parsedCredentials.data;
+
+            const hashedPassword = await bcrypt.hash(password, 10);
             const existingUser = await db.user.findFirst({
                 where: {
-                    number: credentials.phone
+                    number: phone
                 }
             });
 
             if (existingUser) {
-                const passwordValidation = await bcrypt.compare(credentials.password, existingUser.password);
+                const passwordValidation = await bcrypt.compare(password, existingUser.password);
                 if (passwordValidation) {
                     return {
                         id: existingUser.id.toString(),
@@ -35,8 +48,14 @@ export const authOptions = {
             try {
                 const user = await db.user.create({
                     data: {
-                        number: credentials.phone,
-                        password: hashedPassword
+                        number: phone,
+                        password: hashedPassword,
+                        Balance: {
+                            create: {
+                                amount: 0,
+                                locked: 0
+                            }
+                        }
                     }
                 });
             
