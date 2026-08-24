@@ -11,19 +11,24 @@ async function getTransactions() {
         return [];
     }
 
-    const onRampTxns = await prisma.onRampTransaction.findMany({
-        where: { userId }
-    });
-
-    const p2pSentTxns = await prisma.p2pTransfer.findMany({
-        where: { fromUserId: userId },
-        include: { toUser: true }
-    });
-
-    const p2pReceivedTxns = await prisma.p2pTransfer.findMany({
-        where: { toUserId: userId },
-        include: { fromUser: true }
-    });
+    const [onRampTxns, p2pSentTxns, p2pReceivedTxns, merchantTxns] = await Promise.all([
+        prisma.onRampTransaction.findMany({
+            where: { userId }
+        }),
+        prisma.p2pTransfer.findMany({
+            where: { fromUserId: userId },
+            include: { toUser: true }
+        }),
+        prisma.p2pTransfer.findMany({
+            where: { toUserId: userId },
+            include: { fromUser: true }
+        }),
+        // Bug fix: merchant payments were previously missing from user history
+        prisma.merchantTransaction.findMany({
+            where: { userId },
+            include: { merchant: true }
+        }),
+    ]);
 
     const transactions = [
         ...onRampTxns.map(t => ({
@@ -46,7 +51,14 @@ async function getTransactions() {
             status: 'Success',
             provider: t.fromUser.name || t.fromUser.number,
             type: 'Received' as const
-        }))
+        })),
+        ...merchantTxns.map(t => ({
+            time: t.timestamp,
+            amount: t.amount,
+            status: 'Success',
+            provider: t.merchant.name || t.merchant.email,
+            type: 'Paid' as const
+        })),
     ];
 
     return transactions.sort((a, b) => b.time.getTime() - a.time.getTime());
@@ -56,7 +68,7 @@ export default async function TransactionsPage() {
     const transactions = await getTransactions();
 
     return <div className="w-full">
-        <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold">
+        <div className="text-4xl text-purple-400 pt-8 mb-8 font-bold">
             Transactions
         </div>
         <div className="p-4">

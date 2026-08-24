@@ -1,4 +1,6 @@
 import { SidebarItem } from "../../components/SidebarItem";
+import { Toaster } from "sonner";
+import { PaymentNotifier } from "../../components/PaymentNotifier";
 
 export default function Layout({
   children,
@@ -7,7 +9,20 @@ export default function Layout({
 }): JSX.Element {
   return (
     <div className="flex">
-        <div className="w-72 border-r border-slate-300 min-h-screen mr-4 pt-28">
+        {/* SSE-based real-time payment notifier — stays alive across page navigations */}
+        <PaymentNotifier />
+        <Toaster
+            position="top-right"
+            richColors
+            toastOptions={{
+                style: {
+                    background: "#0f172a",
+                    border: "1px solid #1e293b",
+                    color: "#f1f5f9",
+                },
+            }}
+        />
+        <div className="w-72 border-r border-slate-800 min-h-screen mr-4 pt-28">
             <div>
                 <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" />
                 <SidebarItem href={"/transactions"} icon={<TransactionsIcon />} title="Transactions" />
@@ -29,3 +44,4 @@ function TransactionsIcon() {
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
   </svg>
 }
+

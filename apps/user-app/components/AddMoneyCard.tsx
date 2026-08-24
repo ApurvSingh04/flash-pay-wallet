@@ -41,6 +41,10 @@ export const AddMoney = () => {
         <div className="flex justify-center pt-4">
             <Button onClick={async() => {
                 if (loading) return;
+                if (!amount || amount <= 0) {
+                    toast.error("Please enter a valid amount greater than ₹0");
+                    return;
+                }
                 setLoading(true);
                 const res = await createOnRampTransactions(amount * 100, provider);
                 setLoading(false);

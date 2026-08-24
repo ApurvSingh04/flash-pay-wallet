@@ -19,7 +19,7 @@ app.post("/hdfcWebhook", async (req, res) => {
     const webhookSecret = req.headers["authorization"] || req.headers["x-webhook-secret"] || req.body?.secret;
     const expectedSecret = process.env.HDFC_WEBHOOK_SECRET;
 
-    if (expectedSecret && webhookSecret !== expectedSecret) {
+    if (!expectedSecret || webhookSecret !== expectedSecret) {
         return res.status(403).json({
             message: "Unauthorized webhook request: Invalid or missing secret"
         });
@@ -61,6 +61,7 @@ app.post("/hdfcWebhook", async (req, res) => {
         }
 
         // Execute balance update & transaction status change in an atomic transaction
+        // IMPORTANT: Use transaction.amount from DB — never trust the amount from the request body
         await db.$transaction([
             db.balance.updateMany({
                 where: {
@@ -68,7 +69,7 @@ app.post("/hdfcWebhook", async (req, res) => {
                 },
                 data: {
                     amount: {
-                        increment: Number(paymentInformation.amount)
+                        increment: transaction.amount
                     }
                 }
             }),
@@ -76,7 +77,7 @@ app.post("/hdfcWebhook", async (req, res) => {
                 where: {
                     token: paymentInformation.token,
                     status: "Processing" // Safeguard against race conditions / double processing
-                }, 
+                },
                 data: {
                     status: "Success",
                 }
@@ -96,4 +97,5 @@ app.post("/hdfcWebhook", async (req, res) => {
 
 app.listen(3003, () => {
     console.log("Bank webhook server running on port 3003");
+    console.log("HDFC_WEBHOOK_SECRET loaded:", !!process.env.HDFC_WEBHOOK_SECRET ? "✅ YES" : "❌ NOT LOADED");
 });

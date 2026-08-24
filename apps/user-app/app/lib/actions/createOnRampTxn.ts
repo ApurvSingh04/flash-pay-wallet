@@ -26,7 +26,7 @@ export async function createOnRampTransactions(amount: number, provider: string)
         };
     }
 
-    const token = Math.random().toString();
+    const token = crypto.randomUUID();
     await prisma.onRampTransaction.create({
         data: {
             userId: Number(userId),

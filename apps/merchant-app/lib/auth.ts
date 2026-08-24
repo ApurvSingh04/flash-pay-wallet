@@ -2,7 +2,21 @@ import GoogleProvider from "next-auth/providers/google";
 import db from "@repo/db/client";
 import type { AuthOptions } from "next-auth";
 
+const useSecureCookies = process.env.NODE_ENV === "production";
+const cookiePrefix = useSecureCookies ? "__Secure-" : "";
+
 export const authOptions: AuthOptions = {
+    cookies: {
+        sessionToken: {
+            name: `${cookiePrefix}merchant.session-token`,
+            options: {
+                httpOnly: true,
+                sameSite: "lax",
+                path: "/",
+                secure: useSecureCookies,
+            },
+        },
+    },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -11,7 +25,6 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
       async signIn({ user, account }) {
-        console.log("hi signin")
         if (!user || !user.email) {
           return false;
         }
@@ -48,5 +61,8 @@ export const authOptions: AuthOptions = {
         return session;
       }
     },
-    secret: process.env.NEXTAUTH_SECRET || "secret"
+    pages: {
+        signIn: '/login'
+    },
+    secret: process.env.NEXTAUTH_SECRET ?? (() => { throw new Error("NEXTAUTH_SECRET environment variable is not set"); })()
   }

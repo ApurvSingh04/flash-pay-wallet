@@ -51,3 +51,6 @@ desktop.ini
 *.sqlite
 *.sqlite-journal
 *.db-journal
+
+# Documentation
+INTERVIEW_PREP.md

@@ -26,7 +26,6 @@ export const authOptions = {
 
             const { phone, password } = parsedCredentials.data;
 
-            const hashedPassword = await bcrypt.hash(password, 10);
             const existingUser = await db.user.findFirst({
                 where: {
                     number: phone
@@ -46,6 +45,7 @@ export const authOptions = {
             }
 
             try {
+                const hashedPassword = await bcrypt.hash(password, 10);
                 const user = await db.user.create({
                     data: {
                         number: phone,
@@ -72,14 +72,16 @@ export const authOptions = {
           },
         })
     ],
-    secret: process.env.JWT_SECRET || "secret",
+    secret: process.env.NEXTAUTH_SECRET ?? (() => { throw new Error("NEXTAUTH_SECRET environment variable is not set"); })(),
     callbacks: {
         // TODO: can u fix the type here? Using any is bad
         async session({ token, session }: any) {
             session.user.id = token.sub
-
             return session
         }
+    },
+    pages: {
+        signIn: '/login'
     }
   }
   
