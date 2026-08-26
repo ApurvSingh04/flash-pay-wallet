@@ -1,20 +1,42 @@
-- Clone the repo
+# Flash Pay Wallet
 
-```jsx
-git clone https://github.com/100xdevs-cohort-2/week-17-final-code
+A scalable digital wallet and peer-to-peer payment platform built with Next.js, Express, PostgreSQL, and Redis/BullMQ.
+
+## Quick Start Guide
+
+### 1. Prerequisites
+Make sure you have **Node.js** (v18+) and **Docker** installed.
+
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-- npm install
-- Run postgres either locally or on the cloud (neon.tech)
+### 3. Start Infrastructure (Redis & Database)
+Spin up the required Redis and PostgreSQL containers in the background:
+```bash
+docker-compose up -d
+```
+*(Make sure your `.env` files have the correct `DATABASE_URL` pointing to your local Postgres).*
 
-```jsx
-docker run  -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
+### 4. Setup Database & Seed Data
+Push the schema to the database and populate it with test users:
+```bash
+cd packages/db
+npx prisma db push
+npx prisma db seed
+cd ../..
+```
+*Note: The seed script creates two test users: Alice (`1111111111` / `alice`) and Bob (`2222222222` / `bob`).*
+
+### 5. Run the Project
+Launch the User App, Merchant App, and Bank Webhook Worker simultaneously from the root directory:
+```bash
+npm run dev
 ```
 
-- Copy over all .env.example files to .env
-- Update .env files everywhere with the right db url
-- Go to `packages/db`
-    - npx prisma migrate dev
-    - npx prisma db seed
-- Go to `apps/user-app` , run `npm run dev`
-- Try logging in using phone - 1111111111 , password - alice (See `seed.ts`)
+### 6. Explore
+- **User App:** Open `http://localhost:3000` (or `3001`).
+- **Login:** Use phone number `1111111111` and password `alice`.
+
+---
