@@ -1,6 +1,8 @@
 import express from "express";
 import db from "@repo/db/client";
 import { z } from "zod";
+import { bankWebhookQueue } from "./queue";
+import "./worker"; // Start the background worker
 
 const app = express();
 
@@ -73,79 +75,22 @@ app.post("/webhook/:bankName", async (req, res) => {
     }
 
     try {
-        await db.$transaction(async (tx) => {
-            // 3. Lock the transaction row to prevent concurrent processing
-            await tx.$queryRaw`SELECT * FROM "OnRampTransaction" WHERE token = ${paymentInformation.token} FOR UPDATE`;
-
-            const transaction = await tx.onRampTransaction.findUnique({
-                where: { token: paymentInformation.token }
-            });
-
-            if (!transaction) {
-                throw new Error("404:Transaction not found");
-            }
-
-            if (transaction.status !== "Processing") {
-                throw new Error(`400:Transaction has already been processed. Current status: ${transaction.status}`);
-            }
-
-            // 4. Validate amount to ensure it matches
-            if (transaction.amount !== Number(paymentInformation.amount)) {
-                throw new Error("400:Webhook amount does not match transaction amount");
-            }
-
-            if (transaction.userId !== Number(paymentInformation.userId)) {
-                throw new Error("400:Webhook user does not match transaction user");
-            }
-
-            // 5. Update balance and transaction status
-            await tx.balance.updateMany({
-                where: {
-                    userId: Number(paymentInformation.userId)
-                },
-                data: {
-                    amount: {
-                        increment: transaction.amount
-                    }
-                }
-            });
-
-            await tx.onRampTransaction.update({
-                where: {
-                    token: paymentInformation.token
-                },
-                data: {
-                    status: "Success",
-                }
-            });
-            
-            // Mark the event as processed within the same transaction
-            await tx.bankWebhookEvent.update({
-                where: { eventId: paymentInformation.eventId },
-                data: { status: "Processed" }
-            });
+        // 3. Push to BullMQ for asynchronous processing
+        await bankWebhookQueue.add("process-webhook", {
+            eventId: paymentInformation.eventId,
+            token: paymentInformation.token,
+            userId: paymentInformation.userId,
+            amount: paymentInformation.amount
         });
 
+        // 4. Return 200 OK immediately
         return res.json({
-            message: "Captured and Processed"
+            message: "Captured and queued for processing"
         });
     } catch (e: any) {
-        console.error("Webhook processing error:", e);
-        
-        // Mark event as failed if something went wrong during processing
-        await db.bankWebhookEvent.update({
-            where: { eventId: paymentInformation.eventId },
-            data: { status: "Failed" }
-        }).catch(err => console.error("Could not update event to Failed:", err));
-
-        if (e.message?.startsWith("404:")) {
-            return res.status(404).json({ message: e.message.split("404:")[1] });
-        }
-        if (e.message?.startsWith("400:")) {
-            return res.status(400).json({ message: e.message.split("400:")[1] });
-        }
+        console.error("Failed to push to queue:", e);
         return res.status(500).json({
-            message: "Error while processing webhook"
+            message: "Error queueing webhook for processing"
         });
     }
 });
