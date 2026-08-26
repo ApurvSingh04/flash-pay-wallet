@@ -7,13 +7,13 @@ export const SidebarItem = ({ href, title, icon }: { href: string; title: string
     const pathname = usePathname()
     const selected = pathname === href
 
-    return <div className={`flex ${selected ? "text-purple-400" : "text-slate-400"} cursor-pointer  p-2 pl-8`} onClick={() => {
+    return <div className={`flex items-center cursor-pointer p-3 pl-8 transition-colors ${selected ? "bg-card-bg border-l-4 border-accent text-text-light" : "text-text-dim hover:bg-card-bg hover:text-text-light border-l-4 border-transparent"}`} onClick={() => {
         router.push(href);
     }}>
-        <div className="pr-2">
+        <div className="pr-4">
             {icon}
         </div>
-        <div className={`font-bold ${selected ? "text-purple-400" : "text-slate-400"}`}>
+        <div className={`font-mono text-sm tracking-wide ${selected ? "font-bold" : "font-medium"}`}>
             {title}
         </div>
     </div>

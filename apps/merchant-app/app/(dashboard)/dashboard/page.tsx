@@ -31,14 +31,14 @@ export default async function DashboardPage() {
         Dashboard
       </div>
       <div className="p-4">
-        <div className="bg-slate-900 border-slate-800 rounded-xl p-6 shadow-sm border max-w-sm">
-          <h3 className="text-lg font-semibold text-slate-100 mb-4">
+        <div className="bg-card-bg border-border-dark rounded-sm p-6 shadow-none border max-w-sm">
+          <h3 className="text-lg font-semibold text-text-light font-sans mb-4">
             Total Balance
           </h3>
-          <div className="text-3xl font-bold text-slate-50">
+          <div className="text-3xl font-bold font-mono text-text-light">
             ₹{(balance.amount / 100).toLocaleString("en-IN")}
           </div>
-          <div className="text-sm text-slate-400 mt-2">
+          <div className="text-sm text-text-dim font-mono mt-2">
             Available for settlement
           </div>
         </div>

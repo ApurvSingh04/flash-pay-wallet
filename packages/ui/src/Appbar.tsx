@@ -14,9 +14,9 @@ export const Appbar = ({
     onSignin,
     onSignout
 }: AppbarProps) => {
-    return <div className="flex justify-between border-b px-4 border-slate-800">
-        <div className="text-lg flex flex-col justify-center font-bold">
-            Flash Pay
+    return <div className="flex justify-between border-b px-6 py-2 border-border-dark bg-bg-dark">
+        <div className="text-2xl flex flex-col justify-center font-mono font-bold tracking-tight text-text-light">
+            Flash<span className="text-accent">Pay</span>
         </div>
         <div className="flex flex-col justify-center pt-2">
             <Button onClick={user ? onSignout : onSignin}>{user ? "Logout" : "Login"}</Button>

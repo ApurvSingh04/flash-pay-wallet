@@ -1,13 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fira_Code } from "next/font/google";
 import { Providers } from "../provider";
 import { AppbarClient } from "../components/AppbarClient";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const firaCode = Fira_Code({ subsets: ["latin"], variable: '--font-fira-code' });
 
 export const metadata: Metadata = {
-  title: "Wallet",
+  title: "Flash Pay",
   description: "Simple wallet app",
 };
 
@@ -21,12 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-        <body className={inter.className}>
-          <div className="min-w-screen min-h-screen bg-slate-950 text-slate-50">
+        <body className={`${inter.variable} ${firaCode.variable} font-sans bg-bg-dark text-text-light`}>
+          <div className="min-w-screen min-h-screen">
             <AppbarClient />
             {children}
           </div>
-          <Toaster richColors position="top-right" />
+          <Toaster 
+            position="top-right" 
+            toastOptions={{
+              className: 'bg-bg-dark border border-border-dark text-text-light font-mono rounded-sm shadow-lg'
+            }} 
+          />
         </body>
       </Providers>
     </html>

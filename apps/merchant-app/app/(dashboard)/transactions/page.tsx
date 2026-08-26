@@ -29,22 +29,22 @@ export default async function TransactionsPage() {
             Recent Payments
         </div>
         <div className="p-4 max-w-4xl">
-            <div className="bg-slate-900 border-slate-800 rounded-xl shadow-sm border">
+            <div className="bg-card-bg border-border-dark rounded-sm shadow-none border">
                 {transactions.length === 0 ? (
-                    <div className="text-center p-8 text-slate-400">No payments received yet.</div>
+                    <div className="text-center p-8 text-text-dim font-mono text-sm">No payments received yet.</div>
                 ) : (
                     <div>
                         {transactions.map(t => (
-                            <div key={t.id} className="flex justify-between items-center p-4 border-b border-slate-800 last:border-b-0">
+                            <div key={t.id} className="flex justify-between items-center p-4 border-b border-border-dark last:border-b-0 hover:bg-bg-dark transition-colors cursor-default">
                                 <div>
-                                    <div className="font-semibold text-slate-100">
+                                    <div className="font-semibold font-sans text-text-light">
                                         Received from {t.user.name || t.user.number}
                                     </div>
-                                    <div className="text-xs text-slate-400 mt-1">
+                                    <div className="text-xs text-text-dim mt-1 font-mono">
                                         {t.timestamp.toLocaleString()}
                                     </div>
                                 </div>
-                                <div className="font-bold text-green-500">
+                                <div className="font-bold text-green-500 font-mono">
                                     + Rs {t.amount / 100}
                                 </div>
                             </div>

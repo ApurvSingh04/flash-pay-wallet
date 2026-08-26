@@ -20,10 +20,10 @@ export function MerchantPayCard() {
 
     return <Card title="Pay Merchant">
         <div className="min-w-72 pt-2">
-            <TextInput placeholder={"Merchant Email"} label="Merchant Email" onChange={(value) => {
+            <TextInput placeholder={"Merchant Email"} label="Merchant Email" value={email} onChange={(value) => {
                 setEmail(value)
             }} />
-            <TextInput placeholder={"Amount"} label="Amount (₹)" onChange={(value) => {
+            <TextInput placeholder={"Amount"} label="Amount (₹)" value={amount} onChange={(value) => {
                 setAmount(value)
             }} />
             <div className="pt-4 flex justify-center">
@@ -34,6 +34,8 @@ export function MerchantPayCard() {
                     setLoading(false);
                     if (res?.message === "Transfer successful") {
                         toast.success(res.message);
+                        setEmail("");
+                        setAmount("");
                         setIdempotencyKey(crypto.randomUUID());
                         router.refresh(); // flush client-side router cache so balance updates instantly
                     } else if (res?.message) {

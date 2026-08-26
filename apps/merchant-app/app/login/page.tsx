@@ -10,12 +10,12 @@ export default function Login() {
     };
 
     return (
-        <div className="h-screen bg-slate-950 text-slate-50 flex flex-col justify-center">
+        <div className="h-screen bg-bg-dark text-text-light flex flex-col justify-center">
             <Center>
                 <div className="w-96 shadow-xl rounded-xl">
                     <Card title="Merchant Portal Login">
                         <div className="pt-6 pb-4">
-                            <div className="text-center text-sm text-slate-500 mb-6">
+                            <div className="text-center text-sm text-text-dim mb-6 font-mono">
                                 Access your merchant dashboard to manage transactions and payouts securely.
                             </div>
                             <div className="flex justify-center">

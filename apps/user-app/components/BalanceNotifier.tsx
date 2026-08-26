@@ -27,8 +27,8 @@ export function BalanceNotifier() {
                 const data = JSON.parse(event.data);
 
                 if (data.type === "balance_updated") {
-                    toast.success("Deposit successful!", {
-                        description: "Your balance has been updated.",
+                    toast.success("Wallet Credited!", {
+                        description: "Money has been added to your wallet.",
                         duration: 5000,
                     });
 

@@ -13,16 +13,11 @@ export default function Layout({
         <PaymentNotifier />
         <Toaster
             position="top-right"
-            richColors
             toastOptions={{
-                style: {
-                    background: "#0f172a",
-                    border: "1px solid #1e293b",
-                    color: "#f1f5f9",
-                },
+              className: 'bg-bg-dark border border-border-dark text-text-light font-mono rounded-sm shadow-lg'
             }}
         />
-        <div className="w-72 border-r border-slate-800 min-h-screen mr-4 pt-28">
+        <div className="w-72 border-r border-border-dark bg-card-bg min-h-screen mr-4 pt-28">
             <div>
                 <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" />
                 <SidebarItem href={"/transactions"} icon={<TransactionsIcon />} title="Transactions" />

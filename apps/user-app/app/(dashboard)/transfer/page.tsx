@@ -38,7 +38,8 @@ async function getOnRampTransactions() {
         },
         orderBy: {
             startTime: 'desc'
-        }
+        },
+        take: 3
     });
     return txns.map(t => ({
         time: t.startTime,
@@ -63,7 +64,7 @@ export default async function TransferPage() {
             <div>
                 <BalanceCard amount={balance.amount} locked={balance.locked} />
                 <div className="pt-4">
-                    <OnRampTransactions transactions={transactions} />
+                    <OnRampTransactions transactions={transactions} title="Recent Transfers" showViewAll={true} />
                 </div>
             </div>
         </div>

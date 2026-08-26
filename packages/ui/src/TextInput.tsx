@@ -17,7 +17,7 @@ export const TextInput = ({
 }) => {
     const inputId = id || label.toLowerCase().replace(/\s+/g, "_");
     return <div className="pt-2">
-        <label htmlFor={inputId} className="block mb-2 text-sm font-medium text-slate-100">{label}</label>
-        <input value={value} onChange={(e) => onChange(e.target.value)} type={type || "text"} id={inputId} className="bg-slate-900 border border-slate-700 text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-slate-400" placeholder={placeholder} />
+        <label htmlFor={inputId} className="block mb-2 text-sm font-mono text-text-dim">{label}</label>
+        <input value={value} onChange={(e) => onChange(e.target.value)} type={type || "text"} id={inputId} className="bg-bg-dark border border-border-dark text-text-light font-mono text-sm rounded-sm focus:ring-0 focus:border-accent block w-full p-2.5 placeholder-text-dim transition-colors" placeholder={placeholder} />
     </div>
 }

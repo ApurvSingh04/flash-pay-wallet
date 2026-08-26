@@ -21,10 +21,10 @@ export function SendCard() {
 
     return <Card title="Send Money">
         <div className="min-w-72 pt-2">
-            <TextInput placeholder={"Phone Number"} label="Recipient's Number" onChange={(value) => {
+            <TextInput placeholder={"Phone Number"} label="Recipient's Number" value={number} onChange={(value) => {
                 setNumber(value)
             }} />
-            <TextInput placeholder={"Amount"} label="Amount (₹)" onChange={(value) => {
+            <TextInput placeholder={"Amount"} label="Amount (₹)" value={amount} onChange={(value) => {
                 setAmount(value)
             }} />
             <div className="pt-4 flex justify-center">
@@ -35,6 +35,8 @@ export function SendCard() {
                     setLoading(false);
                     if (res?.message === "Transfer successful") {
                         toast.success(res.message);
+                        setNumber("");
+                        setAmount("");
                         setIdempotencyKey(crypto.randomUUID());
                         router.refresh(); // flush client-side router cache so balance updates instantly
                     } else if (res?.message) {

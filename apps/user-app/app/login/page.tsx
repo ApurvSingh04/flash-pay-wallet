@@ -45,9 +45,9 @@ export default function Login() {
     };
 
     return (
-        <div className="h-screen bg-slate-950 text-slate-50 flex flex-col justify-center">
+        <div className="h-screen bg-bg-dark text-text-light flex flex-col justify-center">
             <Center>
-                <div className="w-96 shadow-xl rounded-xl">
+                <div className="w-96 rounded-sm">
                     <Card title="Login to Flash Pay">
                         <div className="pt-2">
                             <TextInput 
@@ -68,9 +68,10 @@ export default function Login() {
                                     {loading ? "Logging in..." : "Login"}
                                 </Button>
                             </div>
-                            <div className="pt-4 text-center text-xs text-slate-500 leading-relaxed">
-                                <span className="text-amber-500 font-semibold">New here?</span> Enter your phone number and a password — a new account will be created automatically.<br/>
-                                <span className="text-amber-500 font-semibold">Returning?</span> Use the same phone + password you registered with.
+                            <div className="pt-4 text-center text-xs text-text-dim leading-relaxed font-mono mt-4 border-t border-border-dark">
+                                <br/>
+                                <span className="text-accent font-semibold tracking-wider">NEW HERE?</span> Enter your phone number and a password — a new account will be created automatically.<br/><br/>
+                                <span className="text-accent font-semibold tracking-wider">RETURNING?</span> Use the same phone + password you registered with.
                             </div>
                         </div>
                     </Card>
