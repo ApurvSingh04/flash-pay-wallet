@@ -69,9 +69,7 @@ export default function Login() {
                                 </Button>
                             </div>
                             <div className="pt-4 text-center text-xs text-text-dim leading-relaxed font-mono mt-4 border-t border-border-dark">
-                                <br/>
-                                <span className="text-accent font-semibold tracking-wider">NEW HERE?</span> Enter your phone number and a password — a new account will be created automatically.<br/><br/>
-                                <span className="text-accent font-semibold tracking-wider">RETURNING?</span> Use the same phone + password you registered with.
+                               <span className="text-accent font-semibold tracking-wider">Hi There!</span> Enter your phone number and a password
                             </div>
                         </div>
                     </Card>

@@ -18,6 +18,8 @@ model User {
   sentTransfers        p2pTransfer[]         @relation("FromUserRelation")
   receivedTransfers    p2pTransfer[]         @relation("ToUserRelation")
   merchantTransactions MerchantTransaction[]
+  linkedMerchants      Merchant[]            @relation("LinkedUser")
+  merchantWithdrawals  MerchantWithdrawal[]
 }
 
 model p2pTransfer {
@@ -38,6 +40,9 @@ model Merchant {
   auth_type            AuthType
   balance              MerchantBalance?
   merchantTransactions MerchantTransaction[]
+  linkedUserId         Int?
+  linkedUser           User?                 @relation("LinkedUser", fields: [linkedUserId], references: [id])
+  merchantWithdrawals  MerchantWithdrawal[]
 }
 
 model OnRampTransaction {
@@ -87,6 +92,16 @@ model MerchantTransaction {
   idempotencyKey String?  @unique
   user           User     @relation(fields: [userId], references: [id])
   merchant       Merchant @relation(fields: [merchantId], references: [id])
+}
+
+model MerchantWithdrawal {
+  id         Int      @id @default(autoincrement())
+  merchantId Int
+  amount     Int
+  timestamp  DateTime @default(now())
+  userId     Int
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model BankWebhookEvent {

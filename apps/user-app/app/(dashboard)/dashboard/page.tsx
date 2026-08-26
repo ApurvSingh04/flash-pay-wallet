@@ -13,12 +13,13 @@ async function getDashboardData() {
         return { balance: { amount: 0, locked: 0 }, recentTransactions: [], userName: null };
     }
 
-    const [balance, onRampTxns, p2pSentTxns, p2pReceivedTxns, userDb] = await Promise.all([
+    const [balance, onRampTxns, p2pSentTxns, p2pReceivedTxns, userDb, merchantWithdrawals] = await Promise.all([
         prisma.balance.findFirst({ where: { userId } }),
         prisma.onRampTransaction.findMany({ where: { userId }, orderBy: { startTime: 'desc' }, take: 5 }),
         prisma.p2pTransfer.findMany({ where: { fromUserId: userId }, include: { toUser: true }, orderBy: { timeStamp: 'desc' }, take: 5 }),
         prisma.p2pTransfer.findMany({ where: { toUserId: userId }, include: { fromUser: true }, orderBy: { timeStamp: 'desc' }, take: 5 }),
-        prisma.user.findUnique({ where: { id: userId }, select: { name: true } })
+        prisma.user.findUnique({ where: { id: userId }, select: { name: true } }),
+        prisma.merchantWithdrawal.findMany({ where: { userId }, include: { merchant: true }, orderBy: { timestamp: 'desc' }, take: 5 })
     ]);
 
     const userName = userDb?.name || null;
@@ -42,6 +43,13 @@ async function getDashboardData() {
             time: t.timeStamp,
             amount: t.amount,
             label: `Received from ${t.fromUser.name || t.fromUser.number}`,
+            color: 'text-green-500',
+            prefix: '+',
+        })),
+        ...merchantWithdrawals.map(t => ({
+            time: t.timestamp,
+            amount: t.amount,
+            label: `Received from Merchant: ${t.merchant.name || t.merchant.email}`,
             color: 'text-green-500',
             prefix: '+',
         })),

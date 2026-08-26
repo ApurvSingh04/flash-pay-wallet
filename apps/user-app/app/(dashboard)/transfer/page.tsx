@@ -54,7 +54,7 @@ export default async function TransferPage() {
     const transactions = await getOnRampTransactions();
 
     return <div className="w-full">
-        <div className="text-4xl text-purple-400 pt-8 mb-8 font-bold">
+        <div className="text-4xl text-text-light pt-8 mb-8 font-bold font-sans">
             Transfer
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 p-4">

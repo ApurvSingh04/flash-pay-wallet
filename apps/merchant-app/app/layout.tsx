@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 import { AppbarClient } from "../components/AppbarClient";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -26,6 +27,12 @@ export default function RootLayout({
             <AppbarClient />
             {children}
           </div>
+          <Toaster 
+            position="top-right" 
+            toastOptions={{
+              className: 'bg-bg-dark border border-border-dark text-text-light font-mono rounded-sm shadow-lg'
+            }} 
+          />
         </body>
       </Providers>
     </html>
