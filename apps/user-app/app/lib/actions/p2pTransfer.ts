@@ -59,8 +59,16 @@ export async function p2pTransfer(to: string, amount: number, idempotencyKey: st
                 }
             });
 
-            // 2. Lock balance row
-            await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`;
+            // 2. Lock balance rows in deterministic order to prevent deadlocks
+            const fromUserId = Number(from);
+            const toUserId = toUser.id;
+
+            const firstLock = Math.min(fromUserId, toUserId);
+            const secondLock = Math.max(fromUserId, toUserId);
+
+            // Acquire locks sequentially
+            await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${firstLock} FOR UPDATE`;
+            await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${secondLock} FOR UPDATE`;
             
             const fromBalance = await tx.balance.findUnique({
                 where: { userId: Number(from) },

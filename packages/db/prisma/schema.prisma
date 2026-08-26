@@ -88,3 +88,18 @@ model MerchantTransaction {
   user           User     @relation(fields: [userId], references: [id])
   merchant       Merchant @relation(fields: [merchantId], references: [id])
 }
+
+model BankWebhookEvent {
+  id        Int         @id @default(autoincrement())
+  eventId   String      @unique
+  token     String
+  payload   Json
+  status    EventStatus @default(Received)
+  createdAt DateTime    @default(now())
+}
+
+enum EventStatus {
+  Received
+  Processed
+  Failed
+}
